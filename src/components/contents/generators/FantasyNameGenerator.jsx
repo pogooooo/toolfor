@@ -290,24 +290,21 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
     const handleMinSyllableWheel = (e) => {
         const delta = e.deltaY < 0 ? 1 : -1;
         setMinSyllable((prev) => {
-            const newValue = Math.max(3, Math.min(20, prev + delta));
-            return newValue;
+            return Math.max(3, Math.min(20, prev + delta));
         });
     };
 
     const handleMaxSyllableWheel = (e) => {
         const delta = e.deltaY < 0 ? 1 : -1;
         setMaxSyllable((prev) => {
-            const newValue = Math.max(3, Math.min(20, prev + delta));
-            return newValue;
+            return Math.max(3, Math.min(20, prev + delta));
         });
     };
 
     const handleCountWheel = (e) => {
         const delta = e.deltaY < 0 ? 1 : -1;
         setCount((prev) => {
-            const newValue = Math.max(10, Math.min(50, prev + delta));
-            return newValue;
+            return Math.max(10, Math.min(50, prev + delta));
         });
     };
 
