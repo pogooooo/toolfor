@@ -1,0 +1,17 @@
+
+
+.app{
+    display: flex;
+    flex-direction: column;
+}
+
+.display{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.content{
+    display: flex;
+    flex-direction: column;
+}
