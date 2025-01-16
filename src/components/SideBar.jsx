@@ -71,7 +71,7 @@ const SideBar = () => {
                     <Option to="./fantasyNameGenerator">판타지 이름 생성기</Option>
                 </Options>
             </Menu>
-            <BorderDiv>　</BorderDiv>
+            <BorderDiv></BorderDiv>
         </SideBarDiv>
     )
 }

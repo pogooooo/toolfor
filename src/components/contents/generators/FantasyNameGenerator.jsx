@@ -69,10 +69,6 @@ const StyledInput = styled.input`
     font-size: 1rem;
     height: 90%;
 
-    &:hover + .tooltip {
-        display: block;
-    }
-
     &:focus{
         outline: none;
     }
@@ -211,7 +207,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
             const numericValue = parseInt(inputValue.trim(), 10)
             setMinSyllable(numericValue)
             if(isNaN(numericValue)){
-                setMinSyllable("")
+                setMinSyllable(-1)
             }
             if(numericValue > 20){
                 setMinSyllable(20)
@@ -238,7 +234,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
             const numericValue = parseInt(inputValue.trim(), 10)
             setMaxSyllable(numericValue)
             if(isNaN(numericValue)){
-                setMaxSyllable("")
+                setMaxSyllable(-1)
             }
             if(numericValue > 20){
                 setMaxSyllable(20)
@@ -264,7 +260,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
         if (/^[\d\s]*$/.test(inputValue)) { // Allow only numeric values
             const numericValue = parseInt(inputValue.trim(), 10);
             if (isNaN(numericValue)) {
-                setCount(""); // Clamp between 1 and 50
+                setCount(-1); // Clamp between 1 and 50
             } else if(numericValue > 50) {
                 setCount(50);
             }
@@ -316,9 +312,9 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
     const handleGenerateName = () => {
         setFrameHeight("600px");
 
-        if (minSyllable == ""){setMinSyllable(3)}
-        if(maxSyllable == ""){setMaxSyllable(3)}
-        if(count == ""){setCount(10)}
+        if (minSyllable === -1){setMinSyllable(3)}
+        if(maxSyllable === -1){setMaxSyllable(3)}
+        if(count === -1){setCount(10)}
 
         if(minSyllable > maxSyllable){
             alert("최소 음절보다 최대 음절 수가 적을 수 없습니다.")
