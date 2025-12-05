@@ -1,186 +1,42 @@
 import PropTypes from "prop-types";
 import {useEffect, useState} from "react";
 import styled from "styled-components";
-import name from '../../../assets/fantasyName.json'
+import { GoogleGenAI } from '@google/genai';
 
-const Generator = styled.div`
-    width: 80vw;
-    min-width: 300px;
-    min-height: 150px;
-    box-sizing: border-box;
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10vh 0 0 0;
-`
+const generateNamesWithGemini = async (gender, minLength, maxLength, count) => {
 
-const GeneratorFrame = styled.div`
-    background-color: rgba(220, 220, 230, 1);
-    padding: 1rem;
-    border-radius: 10px;
-    height: 60vh;
-`
-
-const InputFrame = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    flex-wrap: wrap;
-    padding-left: 3vw;
-    width: 600px;
-`
-
-const TopDiv = styled.div`
-    display: flex;
-    margin-bottom: 10px;
-`
-
-const BottomDiv = styled.div`
-    display: flex;
-`
-
-const InputTitle = styled.div`
-    padding: 0.3rem;
-    font-weight: bold;
-    font-size: 1.2rem;
-    cursor: default;
-    user-select: none;
-`
-
-const StyledInputContainer = styled.div`
-    position: relative;
-    margin-right: 3vw;
-    border: 2px solid rgba(30, 30, 40, 1);
-    padding: 0 0.5vw 0 0.5vw;
-    display: flex;
-    cursor: pointer;
-    user-select: none;
-    font-size: 1.2rem;
-    height: 32px;
-    width: 62px;
-`
-
-const StyledInput = styled.input`
-    background-color: rgba(220, 220, 230, 1);
-    border: none;
-    text-align: center;
-    width: 20px;
-    font-size: 1rem;
-    height: 90%;
-
-    &:focus{
-        outline: none;
-    }
-`
-
-const Tooltip = styled.div`
-    display: none;
-    position: absolute;
-    top: -2.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(30, 30, 40, 0.8);
-    color: white;
-    padding: 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    white-space: nowrap;
-    z-index: 10;
-`
-
-const DropDownWrapper = styled.div`
-    position: relative;
-    display: inline-block;
-    margin-right: 3rem;
-    user-select: none;
-`
-
-const DropDownButton = styled.div`
-    border: 2px solid rgba(30, 30, 40, 1);
-    padding: 0.3rem;
-    cursor: pointer;
-    width: 60px;
-    height: 22px;
-    font-weight: bold;
-
-    &:hover {
-        background-color: rgb(190, 190, 200);
-    }
-`
-
-const DropDownMenu = styled.div`
-    position: absolute;
-    top: 100%;
-    left: 15%;
-    z-index: 10;
-`
-
-const DropDownItem = styled.div`
-    cursor: pointer;
-    background-color: rgba(220, 220, 230, 1);
-    border: 1px solid rgba(30, 30, 40, 1);
-    padding: 0.3rem;
-    width: 100%;
-
-    &:hover {
-        background-color: rgb(190, 190, 200);
-    }
-`
-
-const SubmitButton = styled.button`
-    background-color: rgba(220, 220, 230, 1);
-    border: 2px solid #1e1e28;
-    cursor: pointer;
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-right: 2vw;
-    height: 36px;
-    width: 62px;
-
-    &:hover {
-        background-color: rgb(190, 190, 200);
-    }
-
-    &:active {
-        background-color: rgb(140, 140, 150);
-    }
-`
-
-const Output = styled.div`
-    width: 100%;
-    background-color: #1e1e28;
-    color: rgba(220, 220, 230, 1);
-    margin-top: 10px;
-
-    max-height: 80%;
-    overflow-y: auto;
-    
-    @media (max-height: 700px) {
-        max-height: 75%;        
-    }
-    
-    @media (max-height: 550px){
-        max-height: 70%;
-    }
-    
-    @media (max-height: 450px) {
-        max-height: 65%;
+    const prompt = `
+        Create ${count} unique fantasy names. 
+        The name length must be between ${minLength} and ${maxLength} characters. 
+        The names should be suitable for ${gender === '남녀' ? 'any gender' : gender === '남' ? 'male' : 'female'} characters in a high fantasy setting.
         
+        Output the results strictly as a single JSON array, where each element is an object with two keys: 
+        "eng" for the English name and "kor" for the estimated Korean pronunciation. 
+        Do not include any extra text, comments, or markdown formatting outside the JSON array.
+    `;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+            }
+        });
+
+        const jsonString = response.text.trim();
+        return JSON.parse(jsonString);
+
+    } catch (error) {
+        console.error("Gemini API 호출 오류:", error);
+        return [];
     }
-`
-
-const NameFrame = styled.div`
-
-`
-
-const EngName = styled.div``
-
-const KorName = styled.div``
+};
 
 const FantasyNameGenerator = ({ updateHeaderInfo }) => {
-
-    const [frameHeight, setFrameHeight] = useState("");
 
     const [selectGender, setSelectGender] = useState(false) //modal open by whether
     const [gender, setGender] = useState("남녀") //gender option
@@ -188,6 +44,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
     const [maxSyllable, setMaxSyllable] = useState(3)
     const [count, setCount] = useState(10)
     const [result, setResult] = useState([{"eng":"null"}])
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         updateHeaderInfo("판타지 이름 생성기")
@@ -304,38 +161,53 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
         });
     };
 
-    const getRandomNames = (array, count) => {
-        const shuffled = [...array].sort(() => Math.random() - 0.5); // 배열을 섞음
-        return shuffled.slice(0, count); // 상위 count개 반환
-    };
+    const handleGenerateName = async () => {
+        if (isLoading) return;
 
-    const handleGenerateName = () => {
-        setFrameHeight("600px");
+        let finalMinSyllable = minSyllable === -1 ? 3 : minSyllable;
+        let finalMaxSyllable = maxSyllable === -1 ? 3 : maxSyllable;
+        let finalCount = count === -1 ? 10 : count;
 
-        if (minSyllable === -1){setMinSyllable(3)}
-        if(maxSyllable === -1){setMaxSyllable(3)}
-        if(count === -1){setCount(10)}
+        finalMinSyllable = finalMinSyllable < 3 ? 3 : finalMinSyllable > 20 ? 20 : finalMinSyllable;
+        finalMaxSyllable = finalMaxSyllable < 3 ? 3 : finalMaxSyllable > 20 ? 20 : finalMaxSyllable;
+        finalCount = finalCount < 10 ? 10 : finalCount > 50 ? 50 : finalCount;
 
-        if(minSyllable > maxSyllable){
+        setMinSyllable(finalMinSyllable);
+        setMaxSyllable(finalMaxSyllable);
+        setCount(finalCount);
+
+        if (finalMinSyllable > finalMaxSyllable){
             alert("최소 음절보다 최대 음절 수가 적을 수 없습니다.")
-            return false;
+            return;
         }
 
-        let nameList = []
-        for(let i = minSyllable; i <= maxSyllable; i++) {
-            const syllable = i.toString()
-            nameList = [...nameList, ...Object.values(name.female[syllable])]
-        }
+        setIsLoading(true);
+        setResult([{ "eng": "이름 생성 중...", "kor": "이름을 만드는 중입니다." }]);
 
-        const RandomNameList = getRandomNames(nameList, count)
-        console.log("names: ", RandomNameList)
-        setResult(RandomNameList)
-        console.log("result:", result)
+        try {
+            const generatedNames = await generateNamesWithGemini(
+                gender,
+                finalMinSyllable,
+                finalMaxSyllable,
+                finalCount
+            );
+
+            if (generatedNames && generatedNames.length > 0) {
+                setResult(generatedNames);
+            } else {
+                setResult([{ "eng": "생성 실패", "kor": "API 오류 또는 빈 응답" }]);
+            }
+        } catch (error) {
+            console.error("이름 생성 중 치명적인 오류 발생:", error);
+            setResult([{ "eng": "오류 발생", "kor": "API 연결 또는 파싱 문제" }]);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return(
         <Generator>
-            <GeneratorFrame frameHeight={frameHeight}>
+            <GeneratorFrame>
                 <InputFrame>
                     <TopDiv>
                         <InputTitle>성별</InputTitle>
@@ -414,8 +286,243 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
     )
 }
 
+const Generator = styled.div`
+    width: 85vw;
+    min-width: 300px;
+    box-sizing: border-box;
+    height: calc(100vh - 8vh - 40px);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5vh 0;
+    background-color: rgba(30, 30, 40, 1);
+`
+
+const GeneratorFrame = styled.div`
+    background-color: #2a2a3a;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 800px;
+    height: auto;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+const InputFrame = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 650px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(220, 220, 230, 0.2);
+`
+
+const TopDiv = styled.div`
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    gap: 20px;
+`
+
+const BottomDiv = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 20px;
+`
+
+const InputTitle = styled.div`
+    padding: 0.3rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #dcdce6;
+    cursor: default;
+    user-select: none;
+    white-space: nowrap;
+`
+
+const StyledInputContainer = styled.div`
+    position: relative;
+    border: 2px solid #5a5a6a;
+    background-color: #1e1e28;
+    color: #dcdce6;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 1rem;
+    height: 36px;
+    width: 70px;
+    border-radius: 4px;
+`
+
+const StyledInput = styled.input`
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    width: 30px;
+    font-size: 1.1rem;
+    color: #dcdce6;
+    height: 100%;
+    box-sizing: border-box;
+
+    &:focus{
+        outline: none;
+    }
+`
+
+const Tooltip = styled.div`
+    display: none;
+    position: absolute;
+    top: -3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+
+    ${StyledInputContainer}:hover & {
+        display: block;
+    }
+`
+
+const DropDownWrapper = styled.div`
+    position: relative;
+    display: inline-block;
+    user-select: none;
+`
+
+const DropDownButton = styled.div`
+    border: 2px solid #5a5a6a;
+    background-color: #1e1e28;
+    color: #dcdce6;
+    padding: 0.3rem 0.8rem;
+    cursor: pointer;
+    width: 80px;
+    height: 36px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 4px;
+    box-sizing: border-box;
+
+    &:hover {
+        background-color: #333344;
+    }
+`
+
+const DropDownMenu = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 5px;
+    z-index: 10;
+    width: 100%;
+    border-radius: 4px;
+    overflow: hidden;
+`
+
+const DropDownItem = styled.div`
+    cursor: pointer;
+    background-color: #2a2a3a;
+    color: #dcdce6;
+    border: 1px solid #5a5a6a;
+    border-top: none;
+    padding: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+
+    &:first-child {
+        border-top: 1px solid #5a5a6a;
+    }
+
+    &:hover {
+        background-color: #333344;
+    }
+`
+
+const SubmitButton = styled.button`
+    background-color: #5a5a6a;
+    border: none;
+    color: #dcdce6;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    height: 36px;
+    width: 80px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #6e6e80;
+    }
+
+    &:active {
+        background-color: #4c4c5c;
+    }
+`
+
+const Output = styled.div`
+    width: 100%;
+    max-width: 650px;
+    background-color: #1e1e28;
+    color: #dcdce6;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(220, 220, 230, 0.2);
+
+    max-height: 40vh;
+    overflow-y: auto;
+    
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #5a5a6a;
+        border-radius: 4px;
+    }
+    &::-webkit-scrollbar-track {
+        background: #1e1e28;
+    }
+`
+
+const NameFrame = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(220, 220, 230, 0.2);
+
+    &:last-child {
+        border-bottom: none;
+    }
+`
+
+const EngName = styled.div`
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #90ee90;
+`
+
+const KorName = styled.div`
+    font-size: 1rem;
+    color: #add8e6;
+`
+
 FantasyNameGenerator.propTypes = {
-    updateHeaderInfo: PropTypes.func.isRequired, // 함수 타입이며 필수 속성
+    updateHeaderInfo: PropTypes.func.isRequired,
 };
 
 export default FantasyNameGenerator
