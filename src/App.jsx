@@ -1,7 +1,7 @@
 import './App.css'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
-import Sidebar from './components/Sidebar.jsx'
+import Sidebar from './components/SideBar.jsx'
 import ToolFor from './components/contents/ToolFor.jsx'
 import FantasyNameGenerator from './components/contents/generators/FantasyNameGenerator.jsx'
 
