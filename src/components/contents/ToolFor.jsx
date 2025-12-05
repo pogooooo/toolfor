@@ -6,40 +6,51 @@ import { Link } from "react-router-dom";
 const Main = styled.div`
     width: 70vw;
     box-sizing: border-box;
-    
+    height: calc(100vh - 8vh - 40px);
+    background-color: rgba(30, 30, 40, 1);
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10vh 0 0 0;
-`
+    justify-content: center
+`;
 
 const Menu = styled.div`
     width: 40vw;
-    border: rgba(224, 222, 233, 1) solid 5px;
+    min-width: 400px;
+    background-color: #2a2a3a;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
     display: flex;
     flex-direction: column;
-`
+`;
 
 const Title = styled.div`
-    color: rgba(36, 34, 44, 1);
-    background-color: rgba(224, 222, 233, 1);
+    color: #dcdce6;
+    border-radius: 4px;
     font-size: 1.5rem;
     font-weight: bold;
     padding: 0.5rem;
+    margin-bottom: 15px;
     cursor: default;
-`
+`;
 
 const Option = styled(Link)`
-    color: rgba(224, 222, 233, 0.7);
+    color: rgba(220, 220, 230, 0.8);
     text-decoration: none;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin: 0.5rem;
-    
+    font-size: 1.2rem;
+    font-weight: 500;
+    padding: 10px 15px;
+    margin: 5px 0;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+
     &:hover{
-        color: rgba(224, 222, 233, 1);
+        color: #dcdce6;
+        background-color: #444455;
     }
-`
+`;
 
 const ToolFor = ({ updateHeaderInfo }) => {
 
@@ -58,7 +69,7 @@ const ToolFor = ({ updateHeaderInfo }) => {
 }
 
 ToolFor.propTypes = {
-    updateHeaderInfo: PropTypes.func.isRequired, // 함수 타입이며 필수 속성
+    updateHeaderInfo: PropTypes.func.isRequired,
 };
 
 export default ToolFor

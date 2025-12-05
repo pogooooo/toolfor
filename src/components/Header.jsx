@@ -3,35 +3,36 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 const HeaderDiv = styled.div`
-    background-color: rgba(30, 30, 40, 1);
+    background-color: #1e1e28;
     color: #dcdce6;
-    font-size: 1rem;
     font-weight: bold;
 
     box-sizing: border-box;
-
     display: flex;
     align-items: center;
     height: 8vh;
-`
+    padding: 0 3vw;
+    border-bottom: 2px solid rgba(220, 220, 230, 0.1);
+`;
 
 const TitleDiv = styled.div`
     display: flex;
+    align-items: center;
+    gap: 15px;
 
     & > div {
-        text-decoration: none;
-        color: #dcdce6;
-        margin-right: 1vw;
-        font-size: 1.5rem;
+        color: #8c8c99;
+        font-size: 1.2rem;
+        font-weight: normal;
     }
-`
+`;
 
 const Title = styled(Link)`
     text-decoration: none;
     color: #dcdce6;
-    margin-right: 1vw;
-    font-size: 1.5rem;
-`
+    font-size: 1.8rem;
+    font-weight: bold;
+`;
 
 const Header = ({ headerInfo="" }) => {
 
