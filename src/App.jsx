@@ -2,8 +2,8 @@ import './App.css'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import Sidebar from './components/SideBar.jsx'
-import ToolFor from './components/contents/ToolFor.jsx'
-import FantasyNameGenerator from './components/contents/generators/FantasyNameGenerator.jsx'
+import ToolFor from './pages/ToolFor.jsx'
+import FantasyNameGenerator from './pages/generators/FantasyNameGenerator.jsx'
 
 import {useState} from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
