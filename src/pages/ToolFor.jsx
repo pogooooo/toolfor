@@ -2,55 +2,7 @@ import {useEffect} from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-
-const Main = styled.div`
-    width: 70vw;
-    box-sizing: border-box;
-    height: calc(100vh - 8vh - 40px);
-    background-color: rgba(30, 30, 40, 1);
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center
-`;
-
-const Menu = styled.div`
-    width: 40vw;
-    min-width: 400px;
-    background-color: #2a2a3a;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-`;
-
-const Title = styled.div`
-    color: #dcdce6;
-    border-radius: 4px;
-    font-size: 1.5rem;
-    font-weight: bold;
-    padding: 0.5rem;
-    margin-bottom: 15px;
-    cursor: default;
-`;
-
-const Option = styled(Link)`
-    color: rgba(220, 220, 230, 0.8);
-    text-decoration: none;
-    font-size: 1.2rem;
-    font-weight: 500;
-    padding: 10px 15px;
-    margin: 5px 0;
-    border-radius: 4px;
-    transition: background-color 0.2s, color 0.2s;
-
-    &:hover{
-        color: #dcdce6;
-        background-color: #444455;
-    }
-`;
+import {Colors} from "../styles/Colors.jsx";
 
 const ToolFor = ({ updateHeaderInfo }) => {
 
@@ -73,3 +25,45 @@ ToolFor.propTypes = {
 };
 
 export default ToolFor
+
+
+const Main = styled.div`
+    height: 100%;
+    background-color: ${Colors.background};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const Menu = styled.div`
+    display: flex;
+    flex-direction: column;
+    background-color: ${Colors.optionBG};
+    width: 600px;
+    padding: 50px;
+    border-radius: 10px;
+`;
+
+const Title = styled.div`
+    font-size: 24px;
+    font-weight: bold;
+    color: ${Colors.text};
+    margin-bottom: 10px;
+    padding-left: 5px;
+`;
+
+const Option = styled(Link)`
+    display: block;
+    padding: 18px 25px;
+    background-color: ${Colors.background};
+    color: ${Colors.text};
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 500;
+    transition: all 0.5s ease-in-out;
+
+    &:hover {
+        box-shadow: 0 4px 10px ${Colors.accent};
+    }
+`;
