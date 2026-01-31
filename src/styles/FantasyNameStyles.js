@@ -1,9 +1,15 @@
-import styled from "styled-components";
-import { Colors } from "./Colors"; // Colors 파일 경로에 맞게 수정 필요
+import styled, { keyframes } from "styled-components";
+import { Colors } from "./Colors";
+
+// 툴팁 등장 애니메이션
+const fadeIn = keyframes`
+    from { opacity: 0; transform: translateX(-50%) translateY(5px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+`;
 
 export const Generator = styled.div`
     width: 100%;
-    height: calc(100vh - 70px); /* 헤더 높이 제외 */
+    height: calc(100vh - 70px);
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -61,7 +67,7 @@ export const InputTitle = styled.div`
     font-size: 1rem;
     color: ${Colors.text};
     opacity: 0.8;
-    margin-right: -10px; /* 라벨과 인풋 사이 간격 조절 */
+    margin-right: -10px;
     white-space: nowrap;
 `;
 
@@ -84,8 +90,8 @@ export const StyledInputContainer = styled.div`
         border-color: ${Colors.accent};
     }
 
-    /* 화살표 버튼 스타일링 */
-    & > div {
+    /* [수정 포인트 1] 화살표 버튼 스타일링 - 툴팁(.tooltip)은 제외! */
+    & > div:not(.tooltip) {
         cursor: pointer;
         font-size: 0.8rem;
         color: ${Colors.accent};
@@ -114,19 +120,23 @@ export const StyledInput = styled.input`
 `;
 
 export const Tooltip = styled.div`
+    /* 평소에는 숨김 */
     display: none;
+
     position: absolute;
-    bottom: 110%; /* 위쪽으로 띄움 */
+    bottom: 120%; /* 인풋창 위쪽 */
     left: 50%;
     transform: translateX(-50%);
+
     background-color: ${Colors.accent};
-    color: #fff;
+    color: #ffffff !important; /* 글자색 흰색 강제 지정 */
+
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 0.8rem;
     white-space: nowrap;
-    z-index: 100;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     pointer-events: none;
 
     /* 말풍선 꼬리 */
@@ -141,14 +151,10 @@ export const Tooltip = styled.div`
         border-color: ${Colors.accent} transparent transparent transparent;
     }
 
+    /* 부모(StyledInputContainer)에 마우스 올리면 보임 */
     ${StyledInputContainer}:hover & {
         display: block;
-        animation: fadeIn 0.2s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translate(-50%, 5px); }
-        to { opacity: 1; transform: translate(-50%, 0); }
+        animation: ${fadeIn} 0.2s ease-in-out;
     }
 `;
 
@@ -221,7 +227,7 @@ export const SubmitButton = styled.button`
     margin-left: 10px;
 
     &:hover {
-        background-color: #8a6e6e; /* accent보다 약간 밝은 색 */
+        background-color: #8a6e6e;
         transform: translateY(-2px);
     }
 
@@ -249,7 +255,6 @@ export const Output = styled.div`
     max-height: 400px;
     overflow-y: auto;
 
-    /* 스크롤바 커스텀 */
     &::-webkit-scrollbar {
         width: 6px;
     }
@@ -289,6 +294,6 @@ export const EngName = styled.div`
 
 export const KorName = styled.div`
     font-size: 1rem;
-    color: ${Colors.text}; /* 한글 이름에 accent 컬러 사용 */
+    color: ${Colors.accent};
     font-weight: 500;
 `;

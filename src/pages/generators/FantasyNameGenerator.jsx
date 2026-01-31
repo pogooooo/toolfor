@@ -127,7 +127,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
                 onWheel={handleWheel(setter, value, min, max)}
             />
             <div onClick={() => adjustValue(setter, value, -1, min, max)}>▼</div>
-            <Tooltip className="tooltip">{tooltipText}</Tooltip>
+            <Tooltip>{tooltipText}</Tooltip>
         </StyledInputContainer>
     );
 
