@@ -294,6 +294,6 @@ export const EngName = styled.div`
 
 export const KorName = styled.div`
     font-size: 1rem;
-    color: ${Colors.accent};
+    color: ${Colors.text};
     font-weight: 500;
 `;
