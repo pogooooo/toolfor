@@ -34,6 +34,9 @@ const generateNamesWithGemini = async (gender, minLength, maxLength, count) => {
             contents: prompt,
             config: {
                 responseMimeType: "application/json",
+                temperature: 1.7,
+                topP: 0.95,
+                topK: 64,
             }
         });
 
@@ -110,6 +113,7 @@ const FantasyNameGenerator = ({ updateHeaderInfo }) => {
             } else {
                 setResult([{ "eng": "생성 실패", "kor": "다시 시도해주세요." }]);
             }
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
             setResult([{ "eng": "오류 발생", "kor": "네트워크 상태를 확인해주세요." }]);
         } finally {
